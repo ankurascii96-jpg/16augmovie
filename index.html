@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ankur & Milan - A Brotherhood Story</title>
+    
+    <!-- Premium Cinematic Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        /* Ambient Glow */
+        .ambient-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, rgba(20, 30, 48, 0.3) 0%, rgba(0,0,0,0) 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .cinema-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        /* Start Overlay */
+        #start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transition: opacity 2s ease, visibility 2s;
+        }
+
+        .start-btn {
+            padding: 20px 50px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            letter-spacing: 5px;
+            color: #d4af37;
+            background: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+            transition: all 0.5s ease;
+            text-transform: uppercase;
+        }
+
+        .start-btn:hover {
+            background: #d4af37;
+            color: #000;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Scene Styling */
+        .scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .scene.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .chapter-tag {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 200;
+            letter-spacing: 7px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            font-weight: 400;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            background: linear-gradient(180deg, #fff 0%, #aaa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+
+        .description {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 300;
+            max-width: 650px;
+            line-height: 2;
+            color: rgba(255, 255, 255, 0.85);
+            margin-top: 30px;
+            letter-spacing: 1.5px;
+        }
+
+        /* Media Frame with Ultra Slow Ken Burns Effect */
+        .media-frame {
+            position: relative;
+            width: 80%;
+            max-width: 650px;
+            height: 380px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .media-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.15);
+            transition: transform 35s linear;
+        }
+
+        .scene.active .media-frame img {
+            transform: scale(1);
+        }
+
+        /* Letterbox Bars */
+        .letterbox-top, .letterbox-bottom {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 10%;
+            background-color: #000;
+            z-index: 100;
+        }
+        .letterbox-top { top: 0; }
+        .letterbox-bottom { bottom: 0; }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            bottom: 4%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            z-index: 101;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #d4af37;
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="letterbox-top"></div>
+    <div class="letterbox-bottom"></div>
+    <div class="ambient-glow"></div>
+
+    <!-- Start Overlay -->
+    <div id="start-overlay">
+        <div class="chapter-tag" style="margin-bottom: 20px;">ANKUR PRESENTS TO MILAN</div>
+        <button class="start-btn" onclick="startMovie()">Begin Experience</button>
+    </div>
+
+    <!-- Main Cinematic Stage -->
+    <div class="cinema-container">
+
+        <!-- Scene 1: Prologue (20 seconds) -->
+        <div class="scene" data-duration="20000" data-audio="music_intro.mp3">
+            <div class="chapter-tag">The Story Of Ankur & Milan</div>
+            <h1 class="title">A Brother Like No Other</h1>
+            <p class="description">Zindagi me bohot log milte hain, par Milan... tere jaisa dost sirf kismat walon ko milta hai.</p>
+        </div>
+
+        <!-- Scene 2: Chapter 1 (40 seconds) -->
+        <div class="scene" data-duration="40000" data-audio="music_ch1.mp3">
+            <div class="chapter-tag">Chapter I: The Foundation</div>
+            <div class="media-frame">
+                <img src="photo1.jpg" alt="Ankur and Milan Memory 1">
+            </div>
+            <p class="description">Jahan har mushkil aasaan lagne lagti thi, kyunki tera saath hamesha mere saath tha.</p>
+        </div>
+
+        <!-- Scene 3: Chapter 2 (40 seconds) -->
+        <div class="scene" data-duration="40000" data-audio="music_ch2.mp3">
+            <div class="chapter-tag">Chapter II: Unspoken Brotherhood</div>
+            <div class="media-frame">
+                <img src="photo2.jpg" alt="Ankur and Milan Memory 2">
+            </div>
+            <p class="description">Bina kahe ek doosre ki baat samajhna... humari dosti ki asli taaqat hai.</p>
+        </div>
+
+        <!-- Scene 4: Chapter 3 (40 seconds) -->
+        <div class="scene" data-duration="40000" data-audio="music_ch3.mp3">
+            <div class="chapter-tag">Chapter III: The Bond</div>
+            <div class="media-frame">
+                <img src="photo3.jpg" alt="Ankur and Milan Memory 3">
+            </div>
+            <p class="description">Waqt badla, halaat badle, par Ankur aur Milan ki ye brotherhood hamesha waisi hi rahi.</p>
+        </div>
+
+        <!-- Scene 5: Finale (40 seconds) -->
+        <div class="scene" data-duration="40000" data-audio="music_ch4.mp3">
+            <div class="chapter-tag">From Ankur, With Respect</div>
+            <div class="media-frame">
+                <img src="photo4.jpg" alt="Ankur and Milan Memory 4">
+            </div>
+            <h1 class="title" style="font-size: 3.2rem; margin-top: 25px;">Happy Birthday, Milan!</h1>
+            <p class="description">May your life be filled with endless success and happiness. Stay legendary, my brother!</p>
+        </div>
+
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress"></div>
+    </div>
+
+    <script>
+        const scenes = document.querySelectorAll('.scene');
+        const progressBar = document.getElementById('progress');
+        let currentSceneIndex = 0;
+        let totalDuration = 0;
+        let elapsedTime = 0;
+        let currentAudio = null;
+
+        scenes.forEach(scene => {
+            totalDuration += parseInt(scene.getAttribute('data-duration'));
+        });
+
+        function startMovie() {
+            const overlay = document.getElementById('start-overlay');
+            overlay.style.opacity = '0';
+            overlay.style.visibility = 'hidden';
+
+            setInterval(updateProgressBar, 100);
+            playNextScene();
+        }
+
+        function playNextScene() {
+            if (currentSceneIndex >= scenes.length) return;
+
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+
+            scenes.forEach(scene => scene.classList.remove('active'));
+
+            const currentScene = scenes[currentSceneIndex];
+            currentScene.classList.add('active');
+
+            const audioSrc = currentScene.getAttribute('data-audio');
+            if (audioSrc) {
+                currentAudio = new Audio(audioSrc);
+                currentAudio.play().catch(e => console.log("Audio play issue:", e));
+            }
+
+            const duration = parseInt(currentScene.getAttribute('data-duration'));
+            currentSceneIndex++;
+            setTimeout(playNextScene, duration);
+        }
+
+        function updateProgressBar() {
+            if (elapsedTime < totalDuration) {
+                elapsedTime += 100;
+                const progressPercentage = (elapsedTime / totalDuration) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+            }
+        }
+    </script>
+</body>
+</html>
